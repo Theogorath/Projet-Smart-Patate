@@ -69,13 +69,11 @@ void loop()
     SET(TCCR1B,0);          //-Restart generator
 
     results[d]=results[d]*0.5+(float)(v)*0.5; //Filter results
-    Serial.println(TCCR1B);
     
  //   plot(v,0);              //-Display
  //   plot(results[d],1);
   // delayMicroseconds(1);
   }
-  delay(10000);
 
 
     //PlottArray(1,freq,results); 
