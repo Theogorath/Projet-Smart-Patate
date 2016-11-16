@@ -1,0 +1,20 @@
+(patate pas appuyée : 205 et 225)
+(patate appuyée 1 doigt: 150 et 160)
+(patate appuyée 2 doigts: 118 et 124)
+(patate appuyée 2 doigts: 106 et 110)
+(patate pressée: 92 et 97)
+
+
+
+
+
+
+patate pas appuyée : 200 et 250
+patate appuyée 1 doigt: 150 et 199
+patate appuyée 2 doigts: 120 et 149
+patate appuyée 2 doigts: 100 et 119
+patate pressée: 0 et 99
+
+
+
+

@@ -4,10 +4,10 @@ const int LEDJ=3;
 const int LEDR=4;
 const float maxFreq = 16000000; //max freq supported by Arduino (16MHz)
 
-#define SET(x,y) (x |=(1<<y))        //-Bit set/clear macros
-#define CLR(x,y) (x &= (~(1<<y)))           // |
-#define CHK(x,y) (x & (1<<y))               // |
-#define TOG(x,y) (x^=(1<<y))                //-+
+#define SET(x,y) (x |=(1<<y))				//-Bit set/clear macros
+#define CLR(x,y) (x &= (~(1<<y)))       		// |
+#define CHK(x,y) (x & (1<<y))           		// |
+#define TOG(x,y) (x^=(1<<y))            		//-+
 
 
 
@@ -25,7 +25,6 @@ void setup()
   pinMode(LEDV2, OUTPUT);
   pinMode(LEDJ, OUTPUT);
   pinMode(LEDR, OUTPUT);
-  pinMode(A0, INPUT);
   
   TCCR1A=0b10000010;        //-Set up frequency generator
   TCCR1B=0b00011001;        //-+
@@ -82,9 +81,27 @@ void setFrequency(float frequency)
          default: TCCR1B=0b00011000;
      }
     
-  
+    //WGM12 = 1, WGM13 = 1
+    
+    //three last bit of TCCR1B:    CS12   CS11   CS10
+    // 0: no clock (timer stopped)  0      0      0
+    // clk/1: no prescaling         0      0      1 
+    // clk/8                        0      1      0
+    // clk/64                       0      1      1
+    // clk/256                      1      0      0
+    // clk/1024                     1      0      1
+
+    
     ICR1=v; //pulse duration = ICR1 value x time per counter tick
-      
+    
+    //for 16Mhz (chip frequency)
+    //Prescale  Time per counter tick
+    //1         0.0625 uS
+    //8         0.5 uS
+    //64  4 uS
+    //256 16 uS
+    //1024  64uS
+    
     OCR1A=v/2; //Output Compare Register //low state
 
   }
@@ -97,67 +114,73 @@ void loop()
 
   unsigned int d;
   
-  int moyenne;
+  float moyenne;
   
   moyenne = 0;
 
   float val = analogRead(0);    
 
     for(int i=1;i<161;i++){
-      setFrequency(350000);
+      setFrequency(i * 100000);
       moyenne = moyenne + analogRead(A0);
     }
-
+    
     moyenne = moyenne / 160;
     Serial.println (moyenne);
     
-    
-    
-  if ( moyenne > 118)
+    /*
+  if ( val > 230)
   {
     digitalWrite(LEDJ,HIGH);
-    digitalWrite(LEDV1,LOW);
-    digitalWrite(LEDV2,LOW);
-       delay(100);
-    digitalWrite(LEDR,LOW);
-
   }
   else
   {
-    if ( moyenne > 86)
+    if ( val > 190)
     {
     digitalWrite(LEDV1,HIGH);
-    digitalWrite(LEDV2,LOW);
-    digitalWrite(LEDJ,LOW);
-       delay(100);
-    digitalWrite(LEDR,LOW);
- 
-         
     }
     else    
     {  
-      if ( moyenne >= 83)
+      if ( val > 150)
     {
-      digitalWrite(LEDV2,HIGH);
-      digitalWrite(LEDV1,LOW);
-      digitalWrite(LEDJ,LOW);
-         delay(100);
-      digitalWrite(LEDR,LOW);
-
+      digitalWrite(LEDV1,HIGH);
     }
       else 
       {
-        if ( moyenne > 81)
+        if ( val > 70)
         {digitalWrite(LEDR,HIGH);
-         digitalWrite(LEDV1,LOW);
-         digitalWrite(LEDV2,LOW);
-            delay(100);
-         digitalWrite(LEDJ,LOW);
-
         }
         }
     }
   }
-           
+  */
+                                
+
+  
+
+
+  int counter = 0;
+  for(unsigned int d=0;d<N;d++)
+  {
+    int v=analogRead(0);    //-Read response signal
+    CLR(TCCR1B,0);          //-Stop generator
+    TCNT1=0;                //-Reload new frequency
+    ICR1=d;                 // |
+    OCR1A=d/2;              //-+
+    SET(TCCR1B,0);          //-Restart generator
+
+    results[d]=results[d]*0.5+(float)(v)*0.5; //Filter results
+    
+    
+ //   plot(v,0);              //-Display
+ //   plot(results[d],1);
+  // delayMicroseconds(1);
+  }
+
+
+    //PlottArray(1,freq,results); 
+ 
+
+  TOG(PORTB,0);            //-Toggle pin 8 after each sweep (good for scope)
 }
    

@@ -1,0 +1,4 @@
+  for (i=1; i<161; i++){
+  freq = setFrequency(frequency);
+  setFrequency(frequency)= freq * i;
+}
