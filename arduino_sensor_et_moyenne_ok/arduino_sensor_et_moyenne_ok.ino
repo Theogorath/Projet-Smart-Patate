@@ -82,27 +82,9 @@ void setFrequency(float frequency)
          default: TCCR1B=0b00011000;
      }
     
-    //WGM12 = 1, WGM13 = 1
-    
-    //three last bit of TCCR1B:    CS12   CS11   CS10
-    // 0: no clock (timer stopped)  0      0      0
-    // clk/1: no prescaling         0      0      1 
-    // clk/8                        0      1      0
-    // clk/64                       0      1      1
-    // clk/256                      1      0      0
-    // clk/1024                     1      0      1
-
-    
+  
     ICR1=v; //pulse duration = ICR1 value x time per counter tick
-    
-    //for 16Mhz (chip frequency)
-    //Prescale  Time per counter tick
-    //1         0.0625 uS
-    //8         0.5 uS
-    //64  4 uS
-    //256 16 uS
-    //1024  64uS
-    
+      
     OCR1A=v/2; //Output Compare Register //low state
 
   }
