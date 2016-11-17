@@ -30,8 +30,7 @@ void setFrequency(float frequency)
   {
     
     TCCR1A=0b10000010;        // generateur de frequence(PWM rapide)
-    //WGM11 = 1, COM1A1 = 1
-    //Fast PWM: TOP=ICR1, update of OCR1x=BOTTOM, TOV1 Flag Set on TOP
+    
     
   
     unsigned int v=0;
